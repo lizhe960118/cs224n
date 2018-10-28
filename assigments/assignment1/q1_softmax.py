@@ -32,7 +32,7 @@ def softmax(x):
         # Matrix
         ### YOUR CODE HERE
         x -= np.max(x, axis=1).reshape(x.shape[0], 1)
-        x = np.exp(x) / np.sum(np.exp(x), axis=1)
+        x = np.exp(x) / np.sum(np.exp(x), axis=1, keepdims=True)
         ### END YOUR CODE
     else:
         # Vector
@@ -80,8 +80,12 @@ def test_softmax():
     """
     print "Running your tests..."
     ### YOUR CODE HERE
-    test1 = softmax(np.array([1,2]))
+    test1 = softmax(np.array([217, 218]))
     print test1
+    test2 = softmax(np.array([[2017,2018],[17, 18]]))
+    print test2
+    test3 = softmax(np.array([[-2017,-2018]]))
+    print test3
     ### END YOUR CODE
 
 

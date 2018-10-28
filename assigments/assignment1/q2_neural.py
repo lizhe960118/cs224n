@@ -30,7 +30,7 @@ def forward_backward_prop(X, labels, params, dimensions):
     ofs = 0
     Dx, H, Dy = (dimensions[0], dimensions[1], dimensions[2])
 
-    W1 = np.reshape(params[ofs:ofs+ Dx * H], (Dx, H))
+    W1 = np.reshape(params[ofs:ofs + Dx * H], (Dx, H))
     ofs += Dx * H
     b1 = np.reshape(params[ofs:ofs + H], (1, H))
     ofs += H
@@ -40,11 +40,23 @@ def forward_backward_prop(X, labels, params, dimensions):
 
     # Note: compute cost based on `sum` not `mean`.
     ### YOUR CODE HERE: forward propagation
-    raise NotImplementedError
+    X1_out = sigmoid(X.dot(W1) + b1) # (M, H)
+    softmax_output = softmax(X1_out.dot(W2) + b2) # shape(M, Dy)
     ### END YOUR CODE
 
     ### YOUR CODE HERE: backward propagation
-    raise NotImplementedError
+    M = X.shape[0]
+    cost = - np.sum(np.log(softmax_output[labels==1])) / M 
+    # labels shape :(M, Dy), [label==1] shape:[M, Dy] True, False, 
+    # softmax_output[lable==1]] :shape: (M, )
+    dSoftmax = (softmax_output - labels) / M # (M, Dy)
+    gradW2 = np.dot(X1_out.T, dSoftmax)
+    gradb2 = np.sum(dSoftmax, axis=0, keepdims=True)
+    
+    dX1_out = np.dot(dSoftmax, W2.T) # (M, H)
+    dsigmoid = sigmoid_grad(X1_out) * dX1_out # important!
+    gradW1 = np.dot(X.T, dsigmoid) #(Dx, H) = (Dx, M)(M, H)
+    gradb1 = np.sum(dsigmoid, axis=0, keepdims=True)
     ### END YOUR CODE
 
     ### Stack gradients (do not modify)
@@ -84,7 +96,18 @@ def your_sanity_checks():
     """
     print "Running your sanity checks..."
     ### YOUR CODE HERE
-    raise NotImplementedError
+    N = 20
+    dimensions = [10, 20, 10]
+    data = np.random.randn(N, dimensions[0])   # each row will be a datum
+    labels = np.zeros((N, dimensions[2]))
+    for i in xrange(N):
+        labels[i, random.randint(0,dimensions[2]-1)] = 1
+
+    params = np.random.randn((dimensions[0] + 1) * dimensions[1] + (
+        dimensions[1] + 1) * dimensions[2], )
+
+    gradcheck_naive(lambda params:
+        forward_backward_prop(data, labels, params, dimensions), params)
     ### END YOUR CODE
 
 
