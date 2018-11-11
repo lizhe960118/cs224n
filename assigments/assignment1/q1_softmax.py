@@ -41,7 +41,7 @@ def softmax(x):
         x = np.exp(x) / np.sum(np.exp(x)) 
         ### END YOUR CODE
 
-    assert x.shape == orig_shape
+    assert(x.shape == orig_shape)
     return x
 
 
@@ -50,25 +50,25 @@ def test_softmax_basic():
     Some simple tests to get you started.
     Warning: these are not exhaustive.
     """
-    print "Running basic tests..."
+    print('Running basic tests...')
     test1 = softmax(np.array([1,2]))
-    print test1
+    print(test1)
     ans1 = np.array([0.26894142,  0.73105858])
-    assert np.allclose(test1, ans1, rtol=1e-05, atol=1e-06)
+    assert(np.allclose(test1, ans1, rtol=1e-05, atol=1e-06))
 
     test2 = softmax(np.array([[1001,1002],[3,4]]))
-    print test2
+    print(test2)
     ans2 = np.array([
         [0.26894142, 0.73105858],
         [0.26894142, 0.73105858]])
-    assert np.allclose(test2, ans2, rtol=1e-05, atol=1e-06)
+    assert(np.allclose(test2, ans2, rtol=1e-05, atol=1e-06))
 
     test3 = softmax(np.array([[-1001,-1002]]))
-    print test3
+    print(test3)
     ans3 = np.array([0.73105858, 0.26894142])
-    assert np.allclose(test3, ans3, rtol=1e-05, atol=1e-06)
+    assert(np.allclose(test3, ans3, rtol=1e-05, atol=1e-06))
 
-    print "You should be able to verify these results by hand!\n"
+    print("You should be able to verify these results by hand!\n")
 
 
 def test_softmax():
@@ -78,14 +78,14 @@ def test_softmax():
     This function will not be called by the autograder, nor will
     your tests be graded.
     """
-    print "Running your tests..."
+    print("Running your tests...")
     ### YOUR CODE HERE
     test1 = softmax(np.array([217, 218]))
-    print test1
+    print(test1)
     test2 = softmax(np.array([[2017,2018],[17, 18]]))
-    print test2
+    print(test2)
     test3 = softmax(np.array([[-2017,-2018]]))
-    print test3
+    print(test3)
     ### END YOUR CODE
 
 
