@@ -1,0 +1,6 @@
+*.npy
+assigments/assignment1/utils/datasets/
+assigments/assignment1/__pycache__/
+assigments/assignment1/utils/__pycache__/
+assigments/assignment2/utils/datasets/
+assigments/assignment3/utils/datasets/
