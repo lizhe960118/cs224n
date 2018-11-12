@@ -50,7 +50,7 @@ def getSentenceFeatures(tokens, wordVectors, sentence):
 
     ### YOUR CODE HERE
     for s in sentence:
-        sentVector += wordVector[tokens[s],:]
+        sentVector += wordVectors[tokens[s],:]
     
     sentVector *= 1.0 / len(sentence)
     ### END YOUR CODE
@@ -66,7 +66,7 @@ def getRegularizationValues():
     """
     values = None   # Assign a list of floats in the block below
     ### YOUR CODE HERE
-    values = np.logspace(-4, 2, num=100, base=10)
+    values = np.logspace(-10, 2, num=100, base=10)
     ### END YOUR CODE
     return sorted(values)
 
@@ -141,9 +141,12 @@ def outputPredictions(dataset, features, labels, clf, filename):
     """ Write the predictions to file """
     pred = clf.predict(features)
     with open(filename, "w") as f:
-        print(>> f, "True\tPredicted\tText")
+#         print >> f, "True\tPredicted\tText"
+        print("True\tPredicted\tText")
         for i in range(len(dataset)):
-            print(>> f, "%d\t%d\t%s" % (
+#             print(>> f, "%d\t%d\t%s" % (
+#                 labels[i], pred[i], " ".join(dataset[i][0])))
+            print("%d\t%d\t%s" % (
                 labels[i], pred[i], " ".join(dataset[i][0])))
 
 
@@ -236,7 +239,7 @@ def main(args):
             result["test"]))
     print("")
 
-    bestResult = chooseBestModel(results))
+    bestResult = chooseBestModel(results)
     print("Best regularization value: %0.2E" % bestResult["reg"])
     print("Test accuracy (%%): %f" % bestResult["test"])
 
