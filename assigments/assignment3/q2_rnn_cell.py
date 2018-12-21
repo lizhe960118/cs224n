@@ -62,7 +62,14 @@ class RNNCell(tf.nn.rnn_cell.RNNCell):
         # be defined elsewhere!
         with tf.variable_scope(scope):
             ### YOUR CODE HERE (~6-10 lines)
-            pass
+            W_x = tf.get_variable("W_x", shape=(self.input_size, self._state_size), dtype=tf.float32,
+                initializer=tf.contrib.layers.xavier_initializer())
+            W_h = tf.get_variable("W_h", shape=(self._state_size, self._state_size), dtype=tf.float32,
+                initializer=tf.contrib.layers.xavier_initializer())
+            b = tf.get_variable("b", shape=(self._state_size), dtype=tf.float32,
+                initializer=tf.contrib.layers.xavier_initializer())
+            new_state = tf.matmul(inputs, W_x) + tf.matmul(state, W_h) + b
+            new_state = tf.nn.sigmoid(new_state)
             ### END YOUR CODE ###
         # For an RNN , the output and state are the same (N.B. this
         # isn't true for an LSTM, though we aren't using one of those in
@@ -103,8 +110,8 @@ def test_rnn_cell():
                 print("y_ = " + str(y_))
                 print("ht_ = " + str(ht_))
 
-                assert np.allclose(y_, ht_), "output and state should be equal."
-                assert np.allclose(ht, ht_, atol=1e-2), "new state vector does not seem to be correct."
+                assert(np.allclose(y_, ht_), "output and state should be equal.")
+                assert(np.allclose(ht, ht_, atol=1e-2), "new state vector does not seem to be correct.")
 
 def do_test(_):
     logger.info("Testing rnn_cell")

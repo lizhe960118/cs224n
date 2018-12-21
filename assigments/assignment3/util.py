@@ -11,10 +11,14 @@ from __future__ import division
 import sys
 import time
 import logging
-import StringIO
+# import StringIO
 from collections import defaultdict, Counter, OrderedDict
 import numpy as np
 from numpy import array, zeros, allclose
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 
 logger = logging.getLogger("hw3")
 logger.setLevel(logging.DEBUG)
@@ -32,16 +36,16 @@ def read_conll(fstream):
         line = line.strip()
         if len(line) == 0 or line.startswith("-DOCSTART-"):
             if len(current_toks) > 0:
-                assert len(current_toks) == len(current_lbls)
+                assert(len(current_toks) == len(current_lbls))
                 ret.append((current_toks, current_lbls))
             current_toks, current_lbls = [], []
         else:
-            assert "\t" in line, r"Invalid CONLL format; expected a '\t' in {}".format(line)
+            # assert "\t" in line, r"Invalid CONLL format; expected a '\t' in {}".format(line)
             tok, lbl = line.split("\t")
             current_toks.append(tok)
             current_lbls.append(lbl)
     if len(current_toks) > 0:
-        assert len(current_toks) == len(current_lbls)
+        # assert len(current_toks) == len(current_lbls)
         ret.append((current_toks, current_lbls))
     return ret
 
@@ -66,7 +70,7 @@ def test_read_conll():
         ("Peter Blackburn".split(), "PER PER".split())
         ]
 
-    assert read_conll(input_) == output
+    assert(read_conll(input_) == output)
 
 def write_conll(fstream, data):
     """
@@ -101,7 +105,7 @@ Blackburn	PER
     output_ = StringIO.StringIO()
     write_conll(output_, input)
     output_ = output_.getvalue()
-    assert output == output_
+    assert(output == output_)
 
 def load_word_vector_mapping(vocab_fstream, vector_fstream):
     """
@@ -134,11 +138,11 @@ in""".split("\n")
 -0.008573 -0.731185 -1.108792 -0.358545 0.507277 -0.050167 0.751870 0.217678 -0.646852 -0.947062 -1.187739 0.490993 -1.500471 0.463113 1.370237 0.218072 0.213489 -0.362163 -0.758691 -0.670870 0.218470 1.641174 0.293220 0.254524 0.085781 0.464454 0.196361 -0.693989 -0.384305 -0.171888 0.045602 1.476064 0.478454 0.726961 -0.642484 -0.266562 -0.846778 0.125562 -0.787331 -0.438503 0.954193 -0.859042 -0.180915 -0.944969 -0.447460 0.036127 0.654763 0.439739 -0.038052 0.991638""".split("\n")
 
     wvs = load_word_vector_mapping(vocab, vector)
-    assert "UUUNKKK" in wvs
-    assert allclose(wvs["UUUNKKK"], array([0.172414, -0.091063, 0.255125, -0.837163, 0.434872, -0.499848, -0.042904, -0.059642, -0.635087, -0.458795, -0.105671, 0.506513, -0.105105, -0.405678, 0.493365, 0.408807, 0.401635, -0.817805, 0.626340, 0.580636, -0.246996, -0.008515, -0.671140, 0.301865, -0.439651, 0.247694, -0.291402, 0.873009, 0.216212, 0.145576, -0.211101, -0.352360, 0.227651, -0.118416, 0.371816, 0.261296, 0.017548, 0.596692, -0.485722, -0.369530, -0.048807, 0.017960, -0.040483, 0.111193, 0.398039, 0.162765, 0.408946, 0.005343, -0.107523, -0.079821]))
-    assert "the" in wvs
-    assert "of" in wvs
-    assert "and" in wvs
+    assert("UUUNKKK" in wvs)
+    assert(allclose(wvs["UUUNKKK"], array([0.172414, -0.091063, 0.255125, -0.837163, 0.434872, -0.499848, -0.042904, -0.059642, -0.635087, -0.458795, -0.105671, 0.506513, -0.105105, -0.405678, 0.493365, 0.408807, 0.401635, -0.817805, 0.626340, 0.580636, -0.246996, -0.008515, -0.671140, 0.301865, -0.439651, 0.247694, -0.291402, 0.873009, 0.216212, 0.145576, -0.211101, -0.352360, 0.227651, -0.118416, 0.371816, 0.261296, 0.017548, 0.596692, -0.485722, -0.369530, -0.048807, 0.017960, -0.040483, 0.111193, 0.398039, 0.162765, 0.408946, 0.005343, -0.107523, -0.079821])))
+    assert("the" in wvs)
+    assert("of" in wvs)
+    assert("and" in wvs)
 
 def window_iterator(seq, n=1, beg="<s>", end="</s>"):
     """
@@ -155,8 +159,8 @@ def window_iterator(seq, n=1, beg="<s>", end="</s>"):
         yield ret
 
 def test_window_iterator():
-    assert list(window_iterator(list("abcd"), n=0)) == [["a",], ["b",], ["c",], ["d"]]
-    assert list(window_iterator(list("abcd"), n=1)) == [["<s>","a","b"], ["a","b","c",], ["b","c","d",], ["c", "d", "</s>",]]
+    assert(list(window_iterator(list("abcd"), n=0)) == [["a",], ["b",], ["c",], ["d"]])
+    assert(list(window_iterator(list("abcd"), n=1)) == [["<s>","a","b"], ["a","b","c",], ["b","c","d",], ["c", "d", "</s>",]])
 
 def one_hot(n, y):
     """

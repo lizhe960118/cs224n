@@ -87,6 +87,8 @@ class SequencePredictor(Model):
 
         x = self.inputs_placeholder
         ### YOUR CODE HERE (~2-3 lines)
+        pred = tf.nn.dynamic_rnn(cell, x, dtype=tf.float32)[1]
+        preds = tf.nn.sigmoid(pred)
         ### END YOUR CODE
 
         return preds #state # preds
@@ -106,9 +108,8 @@ class SequencePredictor(Model):
             loss: A 0-d tensor (scalar)
         """
         y = self.labels_placeholder
-
         ### YOUR CODE HERE (~1-2 lines)
-
+        loss = tf.reduce_mean(tf.nn.l2_loss(y - preds))
         ### END YOUR CODE
 
         return loss
@@ -142,14 +143,23 @@ class SequencePredictor(Model):
         optimizer = tf.train.GradientDescentOptimizer(learning_rate=self.config.lr)
 
         ### YOUR CODE HERE (~6-10 lines)
+        gradients_variables = optimizer.compute_gradients(loss)
+        gradients = [output[0] for output in gradients_variables]
+        variables = [output[1] for output in gradients_variables]
+        if self.config.clip_gradients:
+            temp_gradients = tf.clip_by_global_norm(gradients, clip_norm=self.config.max_grad_norm)[0]
+            gradients = temp_gradients
 
+        gradients_variables = [(gradients[i], variables[i]) for i in range(len(gradients))]
+        self.grad_norm = tf.global_norm(gradients)
+
+        train_op = optimizer.apply_gradients(gradients_variables)
         # - Remember to clip gradients only if self.config.clip_gradients
         # is True.
         # - Remember to set self.grad_norm
 
         ### END YOUR CODE
-
-        assert self.grad_norm is not None, "grad_norm was not set properly!"
+        assert(self.grad_norm is not None, "grad_norm was not set properly!")
         return train_op
 
     def train_on_batch(self, sess, inputs_batch, labels_batch):
@@ -313,8 +323,6 @@ def do_sequence_prediction(args):
 
         # Initializing RNNs weights to be very large to showcase
         # gradient clipping.
-
-
         logger.info("Building model...",)
         start = time.time()
         model = SequencePredictor(config)
